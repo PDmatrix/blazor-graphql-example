@@ -1,0 +1,19 @@
+﻿@page "/"
+@inject HttpClient Http
+
+<button data-toggle="modal" data-target="#modal">Show or Hide</button>
+<Modal ModalId="modal">
+    <ModalHeader ModalId="modal" Title="MyTitle"/>
+    <ModalBody />
+    <ModalFooter ModalId="modal" ButtonTitle="ButtonTitle"/>
+</Modal>
+
+@functions
+{
+    public bool Visible { get; set; }
+    
+    private void Click()
+    {
+        Visible = !Visible;
+    }
+}

@@ -1,0 +1,42 @@
+@using BlazorDB.App.Models
+@if (Student == null)
+{
+    <Loader/>
+}
+else
+{
+    <form>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Имя:</label>
+            <input bind="@Student.StudentName" type="text" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="surname" class="col-form-label">Фамилия:</label>
+            <input bind="@Student.Surname" type="text" class="form-control" id="surname" />
+        </div>
+        <div class="form-group">
+            <label for="gender" class="col-form-label">Пол:</label>
+            <input bind="@Student.Gender" type="text" class="form-control" id="gender" />
+        </div>
+        <div class="form-group">
+            <label for="birth-year" class="col-form-label">Год рождения:</label>
+            <input bind="@Student.BirthYear" type="number" class="form-control" id="birth-year" />
+        </div>
+        <div class="form-group">
+            <label for="scholarship" class="col-form-label">Стипендия:</label>
+            <input bind="@Student.Scholarship" type="number" class="form-control" id="scholarship" />
+        </div>
+        <div class="form-group">
+            <label for="children" class="col-form-label">Количество детей:</label>
+            <input bind="@Student.Children" type="number" class="form-control" id="children" />
+        </div>
+    </form>
+}
+
+@functions
+{
+
+    [Parameter]
+    private Student Student { get; set; }
+
+}

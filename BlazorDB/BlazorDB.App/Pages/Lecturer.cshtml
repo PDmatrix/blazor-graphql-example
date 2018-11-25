@@ -1,0 +1,56 @@
+@page "/lecturers"
+@using BlazorDB.App.Services
+
+@inject HttpClient Http
+@inject GraphqQlService GraphqQlService
+
+@if (Lecturers == null)
+{
+    <Loader />
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Пол</th>
+            <th>Год рождения</th>
+            <th>Тип преподавателя</th>
+            <th>Количество детей</th>
+            <th>Зарплата</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var lecturer in Lecturers)
+        {
+            <tr>
+                <td>@lecturer.LecturerName</td>
+                <td>@lecturer.Surname</td>
+                <td>@lecturer.Gender</td>
+                <td>@lecturer.BirthYear</td>
+                <td>@lecturer.LecturerType</td>
+                <td>@lecturer.Children</td>
+                <td>@lecturer.Salary</td>
+                <td>
+                    <button type="button" class="btn btn-primary">Редактировать</button>
+                    <Divider Vertical="@true" />
+                    <button type="button" class="btn btn-danger">Удалить</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@functions
+{
+    private ICollection<BlazorDB.App.Models.Lecturer> Lecturers { get; set; }
+
+    protected override async Task OnInitAsync()
+    {
+        Lecturers = await GraphqQlService.GetLecturersAsync();
+    }
+}

@@ -1,0 +1,14 @@
+@if (Vertical)
+{
+    <div class="divider divider-vertical"></div>
+}
+else
+{
+    <div class="divider divider-horizontal"></div>
+}
+
+@functions
+{
+    [Parameter]
+    protected bool Vertical { get; set;  } = false;
+}

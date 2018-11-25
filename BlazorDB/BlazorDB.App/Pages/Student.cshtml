@@ -1,0 +1,137 @@
+@page "/students"
+@using BlazorDB.App.Services
+
+@inject HttpClient Http
+@inject GraphqQlService GraphqQlService
+
+
+<Modal ModalId="modal">
+    <ModalHeader Title="Редактировать студента"/>
+    <ModalBody>
+        <StudentModal Student="@EditStudent" />
+    </ModalBody>
+    <ModalFooter 
+        CloseOnClick="@true" 
+        OnClick="@(async () => await UpdateStudent())" 
+        ButtonTitle="Сохранить"/>
+</Modal>
+@if (Students == null)
+{
+    <Loader />
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Пол</th>
+                <th>Год рождения</th>
+                <th>Стипендия</th>
+                <th>Количество детей</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var student in Students)
+            {
+                <tr>
+                    <td>@student.StudentName</td>
+                    <td>@student.Surname</td>
+                    <td>@student.Gender</td>
+                    <td>@student.BirthYear</td>
+                    <td>@student.Scholarship</td>
+                    <td>@student.Children</td>
+                    <td>
+                        <button
+                            data-toggle="modal"
+                            data-target="#modal"
+                            type="button"
+                            onclick="@(() => ShowModal(student.Id))"
+                            class="btn btn-primary">
+                            Редактировать
+                        </button>
+                        <Divider Vertical="@true" />
+                        <button
+                            type="button"
+                            onclick="@(async () => await DeleteStudent(student.Id))"
+                            class="btn btn-danger">
+                            Удалить
+                        </button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <button
+            data-toggle="modal"
+            data-target="#modalAdd"
+            type="button"
+            onclick="@(() => ShowModal())"
+            class="btn btn-success">
+            Добавить
+        </button>
+    </div>
+}
+<Modal ModalId="modalAdd">
+    <ModalHeader Title="Добавить студента"/>
+    <ModalBody>
+        <StudentModal Student="@EditStudent" />
+    </ModalBody>
+    <ModalFooter 
+        CloseOnClick="@true" 
+        OnClick="@(async () => await AddStudent())" 
+        ButtonTitle="Сохранить"/>
+</Modal>
+
+
+@functions
+{
+    private ICollection<Models.Student> Students { get; set; }
+    private Models.Student EditStudent { get; set; }
+
+    protected override async Task OnInitAsync()
+    {
+        Students = await GraphqQlService.GetStudentsAsync().ConfigureAwait(false);
+    }
+    
+    private async Task AddStudent()
+    {
+        await GraphqQlService.AddStudentAsync(EditStudent).ConfigureAwait(false);
+        Students = await GraphqQlService.GetStudentsAsync().ConfigureAwait(false);
+        StateHasChanged();
+    }
+    
+    private void ShowModal()
+    {
+        EditStudent = new Models.Student();
+    }
+    
+    private async Task ShowModal(int id)
+    {
+        EditStudent = await GraphqQlService.GetStudentAsync(id).ConfigureAwait(false);
+    }
+    
+    private async Task UpdateStudent()
+    {
+        if (Students is List<Models.Student> studentList)
+        {
+            studentList[studentList.FindIndex(r => r.Id == EditStudent.Id)] = EditStudent;
+        }
+        else
+        {
+            Students = await GraphqQlService.GetStudentsAsync().ConfigureAwait(false);
+        }
+        StateHasChanged();
+        EditStudent = await GraphqQlService.UpdateStudentAsync(EditStudent).ConfigureAwait(false);
+    }
+    
+    private async Task DeleteStudent(int id)
+    {
+        Students = Students.Where(r => r.Id != id).ToList();
+        StateHasChanged();
+        await GraphqQlService.DeleteStudentAsync(id).ConfigureAwait(false);
+    }
+}

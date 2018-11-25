@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorDB.Server", "BlazorDB\BlazorDB.Server\BlazorDB.Server.csproj", "{195D36E7-C39F-4D89-8C0E-4D356E66F965}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorDB.App", "BlazorDB\BlazorDB.App\BlazorDB.App.csproj", "{F3AEB6C3-3141-4695-8DEA-DF1D111B04C3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{195D36E7-C39F-4D89-8C0E-4D356E66F965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{195D36E7-C39F-4D89-8C0E-4D356E66F965}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{195D36E7-C39F-4D89-8C0E-4D356E66F965}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{195D36E7-C39F-4D89-8C0E-4D356E66F965}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3AEB6C3-3141-4695-8DEA-DF1D111B04C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3AEB6C3-3141-4695-8DEA-DF1D111B04C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3AEB6C3-3141-4695-8DEA-DF1D111B04C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3AEB6C3-3141-4695-8DEA-DF1D111B04C3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

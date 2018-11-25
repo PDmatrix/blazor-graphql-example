@@ -1,0 +1,31 @@
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+    
+    <button
+        onclick="@OnClickHandle"
+        type="button"
+        data-dismiss="@GetDataDismiss()"
+        class="btn btn-primary">
+        @ButtonTitle
+    </button>
+</div>
+
+@functions
+{
+    [Parameter]
+    private Action OnClick { get; set; }
+    [Parameter]
+    private string ButtonTitle { get; set; }
+    [Parameter]
+    private bool CloseOnClick { get; set; }
+
+    private string GetDataDismiss()
+    {
+        return CloseOnClick ? "modal" : "";
+    }
+    
+    private void OnClickHandle()
+    {
+        OnClick?.Invoke();
+    }
+}
