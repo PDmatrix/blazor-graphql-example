@@ -2,4 +2,4 @@
 *.html text
 *.css text
 *.js text
-wwwroot/* linguist-vendored
+BlazorDB/BlazorDb.App/wwwroot/* linguist-vendored
