@@ -2,4 +2,5 @@
 *.html text
 *.css text
 *.js text
+*.cshtml text
 BlazorDB/BlazorDB.App/wwwroot/* linguist-vendored
