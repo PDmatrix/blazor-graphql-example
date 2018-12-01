@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using BlazorDB.App.Services;
+
 namespace BlazorDB.App.Models
 {
 	public class Student : Node
@@ -11,5 +15,19 @@ namespace BlazorDB.App.Models
 		public int Children { get; set; }	
 		public int Scholarship { get; set; }
 		public string Fullname { get; set; }
+		public Group ClassByClassId { get; set; }
+		
+		public IEnumerable<Group> Groups { get; set; }
+
+		public Student()
+		{
+			Groups = new List<Group>();
+			ClassId = 1;
+		}
+
+		public async Task FillGroups()
+		{
+			Groups = await GraphqQlService.GetGroupsAsync().ConfigureAwait(false);
+		}
 	}
 }

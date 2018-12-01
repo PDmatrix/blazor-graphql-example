@@ -1,0 +1,126 @@
+@page "/classes"
+@using BlazorDB.App.Services
+@inject HttpClient Http
+@inject ClassService ClassService
+
+<Modal ModalId="modal">
+    <ModalHeader Title="Редактировать группу"/>
+    <ModalBody>
+        <GroupModal Group="@EditGroup" />
+    </ModalBody>
+    <ModalFooter 
+        CloseOnClick="@true" 
+        OnClick="@(async () => await UpdateGroup())" 
+        ButtonTitle="Сохранить"/>
+</Modal>
+@if (Groups == null)
+{
+    <Loader />
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Группа</th>
+                <th>Факультет</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var group in Groups)
+            {
+                <tr>
+                    <td>@group.ClassName</td>
+                    <td>@group.Faculty.FacultyName</td>
+                </tr>
+                <button
+                    data-toggle="modal"
+                    data-target="#modal"
+                    type="button"
+                    onclick="@(() => ShowModal(group.Id))"
+                    class="btn btn-primary mb-2">
+                    Редактировать
+                </button>
+                <Divider Vertical="@true" />
+                <button
+                    type="button"
+                    onclick="@(async () => await DeleteGroup(group.Id))"
+                    class="btn btn-danger mb-2">
+                    Удалить
+                </button>
+            }
+            </tbody>
+        </table>
+        <button
+            data-toggle="modal"
+            data-target="#modalAdd"
+            type="button"
+            onclick="@(() => ShowModal())"
+            class="btn btn-success">
+            Добавить
+        </button>
+    </div>
+}
+<Modal ModalId="modalAdd">
+    <ModalHeader Title="Добавить группу"/>
+    <ModalBody>
+        <GroupModal Group="@EditGroup" />
+    </ModalBody>
+    <ModalFooter 
+        CloseOnClick="@true" 
+        OnClick="@(async () => await AddGroup())" 
+        ButtonTitle="Сохранить"/>
+</Modal>
+
+
+@functions
+{
+    private ICollection<Models.Group> Groups { get; set; }
+    private Models.Group EditGroup { get; set; }
+
+    protected override async Task OnInitAsync()
+    {
+        Groups = await ClassService.GetAsync().ConfigureAwait(false);
+    }
+    
+    private async Task AddGroup()
+    {
+        await ClassService.AddAsync(EditGroup).ConfigureAwait(false);
+        Groups = await ClassService.GetAsync().ConfigureAwait(false);
+        StateHasChanged();
+    }
+    
+    private async Task ShowModal()
+    {
+        EditGroup = new Models.Group();
+        await EditGroup.FillFaculties();
+    }
+    
+    private async Task ShowModal(int id)
+    {
+        EditGroup = await ClassService.GetAsync(id).ConfigureAwait(false);
+        await EditGroup.FillFaculties();
+    }
+    
+    private async Task UpdateGroup()
+    {
+        if (Groups is List<Models.Group> groups)
+        {
+            groups[groups.FindIndex(r => r.Id == EditGroup.Id)] = EditGroup;
+        }
+        else
+        {
+            Groups = await ClassService.GetAsync().ConfigureAwait(false);
+        }
+        StateHasChanged();
+        EditGroup = await ClassService.UpdateAsync(EditGroup).ConfigureAwait(false);
+    }
+    
+    private async Task DeleteGroup(int id)
+    {
+        Groups = Groups.Where(r => r.Id != id).ToList();
+        StateHasChanged();
+        await ClassService.DeleteAsync(id).ConfigureAwait(false);
+    }
+}

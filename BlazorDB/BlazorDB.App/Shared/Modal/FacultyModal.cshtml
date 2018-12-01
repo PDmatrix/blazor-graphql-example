@@ -1,0 +1,20 @@
+@using BlazorDB.App.Models
+@if (Faculty == null)
+{
+    <Loader/>
+}
+else
+{
+    <form>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Название факультета</label>
+            <input bind="@Faculty.FacultyName" type="text" class="form-control" id="student-name" />
+        </div>
+    </form>
+}
+
+@functions
+{
+    [Parameter]
+    private Faculty Faculty { get; set; }
+}

@@ -10,8 +10,6 @@ namespace BlazorDB.App.Services
 {
 	public class GraphqQlService
 	{
-		
-		
 		private static async Task<ICollection<T>> GetAll<T>(string query, string name) 
 		{
 			var req = new GraphQLRequest
@@ -34,7 +32,7 @@ namespace BlazorDB.App.Services
 			
 			var client = new GraphQLHttpClient($"{Environment.GetEnvironmentVariable("ASPNETCORE_API_URL")}");
 			var res = await client.SendQueryAsync(req);
-			return res.GetDataFieldAs<T>(name);
+			return res.ExtGetDataFieldAs<T>(name);
 		}
 		
 		private static async Task<T> Mutate<T>(string query, string name, object variables) 
@@ -66,6 +64,9 @@ namespace BlazorDB.App.Services
 					  children
 					  scholarship
 					  fullName
+					  classByClassId {
+					    className
+					  }
 					}
 				  }
 				}";
@@ -73,11 +74,40 @@ namespace BlazorDB.App.Services
 			return await GetAll<Student>(query, "allStudents");
 		}
 		
+		public static async Task<ICollection<Faculty>> GetFacultiesAsync()
+		{
+			const string query = 
+				@"
+				{
+				  allFaculties {
+					nodes {
+					  facultyName
+					}
+				  }
+				}";
+
+			return await GetAll<Faculty>(query, "allFaculties");
+		}
+		
+		public static async Task<Faculty> GetFacultyAsync(int id)
+		{
+			const string query = 
+				@"
+				query GetFacultyById($id: Int!) {
+				  facultyById(id: $id) {
+					facultyName
+				  }
+				}
+				";
+
+			return await GetOne<Faculty>(query, "facultyById", id);
+		}
+		
 		public static async Task<Student> GetStudentAsync(int id)
 		{
 			const string query = 
 				@"
-				query GetStudentById($id: Int!){
+				query GetStudentById($id: Int!) {
 				  studentById(id: $id) {
 					studentName
 					surname
@@ -89,10 +119,28 @@ namespace BlazorDB.App.Services
 					scholarship
 					fullName
 				  }
-				}";
+				}
+				";
 
 			return await GetOne<Student>(query, "studentById", id);
 		}
+
+		public static async Task<ICollection<Group>> GetGroupsAsync()
+		{
+			const string query = 
+				@"
+				{
+					allClasses {
+						nodes {
+							id
+							className
+						}
+					}
+				}
+				";
+
+			return await GetAll<Group>(query, "allClasses");
+		} 
 		
 		public static async Task<ICollection<Lecturer>> GetLecturersAsync()
 		{
@@ -122,15 +170,15 @@ namespace BlazorDB.App.Services
 				mutation UpdateStudent($input: UpdateStudentByIdInput!) {
 				  updateStudentById(input : $input) {
 					student {
-					  studentName
-							surname
-							id
-							classId
-							gender
-							birthYear
-							children
-							scholarship
-							fullName
+						studentName
+						surname
+						id
+						classId
+						gender
+						birthYear
+						children
+						scholarship
+						fullName
 					}
 				  }
 				}";
@@ -145,7 +193,31 @@ namespace BlazorDB.App.Services
 						gender = student.Gender,
 						birthYear = student.BirthYear,
 						children = student.Children,
-						scholarship = student.Scholarship
+						scholarship = student.Scholarship,
+						classId = student.ClassId
+					}
+				}
+			});
+		}
+		
+		public static async Task<Faculty> UpdateFacultyAsync(Faculty faculty)
+		{
+			const string query = 
+				@"
+				mutation UpdateFaculty($input: UpdateFacultyByIdInput!) {
+				  updateFacultyById(input: $input){
+					faculty {
+					  facultyName
+					}
+				  }
+				}";
+
+			return await Mutate<Faculty>(query, "updateFacultyById.faculty", new
+			{
+				input = new {
+					id = faculty.Id,
+					facultyPatch = new {
+						facultyName = faculty.FacultyName
 					}
 				}
 			});
@@ -211,7 +283,7 @@ namespace BlazorDB.App.Services
 						birthYear = student.BirthYear,
 						children = student.Children,
 						scholarship = student.Scholarship,
-						classId = 1
+						classId = student.ClassId
 					}
 				}
 			});

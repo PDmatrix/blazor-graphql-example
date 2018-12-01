@@ -2,7 +2,7 @@
 @using BlazorDB.App.Services
 
 @inject HttpClient Http
-@inject GraphqQlService GraphqQlService
+@inject StudentService StudentService
 
 
 <Modal ModalId="modal">
@@ -27,11 +27,11 @@ else
             <tr>
                 <th>Имя</th>
                 <th>Фамилия</th>
+                <th>Группа</th>
                 <th>Пол</th>
                 <th>Год рождения</th>
                 <th>Стипендия</th>
                 <th>Количество детей</th>
-                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -40,28 +40,27 @@ else
                 <tr>
                     <td>@student.StudentName</td>
                     <td>@student.Surname</td>
+                    <td>@student.ClassByClassId.ClassName</td>
                     <td>@student.Gender</td>
                     <td>@student.BirthYear</td>
                     <td>@student.Scholarship</td>
                     <td>@student.Children</td>
-                    <td>
-                        <button
-                            data-toggle="modal"
-                            data-target="#modal"
-                            type="button"
-                            onclick="@(() => ShowModal(student.Id))"
-                            class="btn btn-primary">
-                            Редактировать
-                        </button>
-                        <Divider Vertical="@true" />
-                        <button
-                            type="button"
-                            onclick="@(async () => await DeleteStudent(student.Id))"
-                            class="btn btn-danger">
-                            Удалить
-                        </button>
-                    </td>
                 </tr>
+                <button
+                    data-toggle="modal"
+                    data-target="#modal"
+                    type="button"
+                    onclick="@(() => ShowModal(student.Id))"
+                    class="btn btn-primary mb-2">
+                    Редактировать
+                </button>
+                <Divider Vertical="@true" />
+                <button
+                    type="button"
+                    onclick="@(async () => await DeleteStudent(student.Id))"
+                    class="btn btn-danger mb-2">
+                    Удалить
+                </button>
             }
             </tbody>
         </table>
@@ -94,24 +93,26 @@ else
 
     protected override async Task OnInitAsync()
     {
-        Students = await GraphqQlService.GetStudentsAsync().ConfigureAwait(false);
+        Students = await StudentService.GetAsync().ConfigureAwait(false);
     }
     
     private async Task AddStudent()
     {
-        await GraphqQlService.AddStudentAsync(EditStudent).ConfigureAwait(false);
-        Students = await GraphqQlService.GetStudentsAsync().ConfigureAwait(false);
+        await StudentService.AddAsync(EditStudent).ConfigureAwait(false);
+        Students = await StudentService.GetAsync().ConfigureAwait(false);
         StateHasChanged();
     }
     
-    private void ShowModal()
+    private async Task ShowModal()
     {
         EditStudent = new Models.Student();
+        await EditStudent.FillGroups();
     }
     
     private async Task ShowModal(int id)
     {
-        EditStudent = await GraphqQlService.GetStudentAsync(id).ConfigureAwait(false);
+        EditStudent = await StudentService.GetAsync(id).ConfigureAwait(false);
+        await EditStudent.FillGroups();
     }
     
     private async Task UpdateStudent()
@@ -122,16 +123,16 @@ else
         }
         else
         {
-            Students = await GraphqQlService.GetStudentsAsync().ConfigureAwait(false);
+            Students = await StudentService.GetAsync().ConfigureAwait(false);
         }
         StateHasChanged();
-        EditStudent = await GraphqQlService.UpdateStudentAsync(EditStudent).ConfigureAwait(false);
+        EditStudent = await StudentService.UpdateAsync(EditStudent).ConfigureAwait(false);
     }
     
     private async Task DeleteStudent(int id)
     {
         Students = Students.Where(r => r.Id != id).ToList();
         StateHasChanged();
-        await GraphqQlService.DeleteStudentAsync(id).ConfigureAwait(false);
+        await StudentService.DeleteAsync(id).ConfigureAwait(false);
     }
 }

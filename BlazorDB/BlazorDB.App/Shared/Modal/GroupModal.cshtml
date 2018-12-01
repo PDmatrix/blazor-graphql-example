@@ -1,0 +1,36 @@
+@using BlazorDB.App.Models
+@if (Group == null)
+{
+    <Loader/>
+}
+else
+{
+    <form>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Название группы</label>
+            <input bind="@Group.ClassName" type="text" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="class" class="col-form-label">Факультеты:</label>
+            <select bind="@Group.FacultyId" class="form-control" id="class">
+                @if (Group.Faculties.Any())
+                {
+                    foreach (var faculty in Group.Faculties)
+                     {
+                         <option value="@faculty.Id">@faculty.FacultyName</option>
+                     }
+                }
+                else
+                {
+                    <Loader />
+                }
+            </select>
+        </div>
+    </form>
+}
+
+@functions
+{
+    [Parameter]
+    private Group Group { get; set; }
+}

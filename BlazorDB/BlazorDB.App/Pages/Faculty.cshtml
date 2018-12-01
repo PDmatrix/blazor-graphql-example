@@ -1,0 +1,122 @@
+@page "/faculties"
+@using BlazorDB.App.Services
+@inject HttpClient Http
+@inject FacultyService FacultyService
+
+<Modal ModalId="modal">
+    <ModalHeader Title="Редактировать факультет"/>
+    <ModalBody>
+        <FacultyModal Faculty="@EditFaculty" />
+    </ModalBody>
+    <ModalFooter 
+        CloseOnClick="@true" 
+        OnClick="@(async () => await UpdateFaculty())" 
+        ButtonTitle="Сохранить"/>
+</Modal>
+@if (Faculties == null)
+{
+    <Loader />
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Факультет</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var faculty in Faculties)
+            {
+                <tr>
+                    <td>@faculty.FacultyName</td>
+                </tr>
+                <button
+                    data-toggle="modal"
+                    data-target="#modal"
+                    type="button"
+                    onclick="@(() => ShowModal(faculty.Id))"
+                    class="btn btn-primary mb-2">
+                    Редактировать
+                </button>
+                <Divider Vertical="@true" />
+                <button
+                    type="button"
+                    onclick="@(async () => await DeleteFaculty(faculty.Id))"
+                    class="btn btn-danger mb-2">
+                    Удалить
+                </button>
+            }
+            </tbody>
+        </table>
+        <button
+            data-toggle="modal"
+            data-target="#modalAdd"
+            type="button"
+            onclick="@(() => ShowModal())"
+            class="btn btn-success">
+            Добавить
+        </button>
+    </div>
+}
+<Modal ModalId="modalAdd">
+    <ModalHeader Title="Добавить факультет"/>
+    <ModalBody>
+        <FacultyModal Faculty="@EditFaculty" />
+    </ModalBody>
+    <ModalFooter 
+        CloseOnClick="@true" 
+        OnClick="@(async () => await AddFaculty())" 
+        ButtonTitle="Сохранить"/>
+</Modal>
+
+
+@functions
+{
+    private ICollection<Models.Faculty> Faculties { get; set; }
+    private Models.Faculty EditFaculty { get; set; }
+
+    protected override async Task OnInitAsync()
+    {
+        Faculties = await FacultyService.GetAsync().ConfigureAwait(false);
+    }
+    
+    private async Task AddFaculty()
+    {
+        await FacultyService.AddAsync(EditFaculty).ConfigureAwait(false);
+        Faculties = await FacultyService.GetAsync().ConfigureAwait(false);
+        StateHasChanged();
+    }
+    
+    private void ShowModal()
+    {
+        EditFaculty = new Models.Faculty();
+    }
+    
+    private async Task ShowModal(int id)
+    {
+        EditFaculty = await FacultyService.GetAsync(id).ConfigureAwait(false);
+    }
+    
+    private async Task UpdateFaculty()
+    {
+        if (Faculties is List<Models.Faculty> facultyList)
+        {
+            facultyList[facultyList.FindIndex(r => r.Id == EditFaculty.Id)] = EditFaculty;
+        }
+        else
+        {
+            Faculties = await FacultyService.GetAsync().ConfigureAwait(false);
+        }
+        StateHasChanged();
+        EditFaculty = await FacultyService.UpdateAsync(EditFaculty).ConfigureAwait(false);
+    }
+    
+    private async Task DeleteFaculty(int id)
+    {
+        Faculties = Faculties.Where(r => r.Id != id).ToList();
+        StateHasChanged();
+        await FacultyService.DeleteAsync(id).ConfigureAwait(false);
+    }
+}

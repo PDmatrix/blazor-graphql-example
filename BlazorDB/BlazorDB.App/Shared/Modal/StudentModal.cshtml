@@ -23,6 +23,22 @@ else
             <input bind="@Student.BirthYear" type="number" class="form-control" id="birth-year" />
         </div>
         <div class="form-group">
+            <label for="class" class="col-form-label">Группа:</label>
+            <select bind="@Student.ClassId" class="form-control" id="class">
+                @if (Student.Groups.Any())
+                {
+                    foreach (var group in Student.Groups)
+                     {
+                         <option value="@group.Id">@group.ClassName</option>
+                     }
+                }
+                else
+                {
+                    <Loader />
+                }
+            </select>
+        </div>
+        <div class="form-group">
             <label for="scholarship" class="col-form-label">Стипендия:</label>
             <input bind="@Student.Scholarship" type="number" class="form-control" id="scholarship" />
         </div>
@@ -35,8 +51,6 @@ else
 
 @functions
 {
-
     [Parameter]
     private Student Student { get; set; }
-
 }
