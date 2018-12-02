@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BlazorDB.App.Interfaces;
 using BlazorDB.App.Models;
 
 namespace BlazorDB.App.Services
 {
-	public class FacultyService : BaseGraphQlService<Faculty>
+	public class FacultyService : BaseGraphQlService<Faculty>, IFacultyService
 	{		
-		public override async Task<ICollection<Faculty>> GetAsync()
+		public async Task<ICollection<Faculty>> GetAsync()
 		{
 			const string query = 
 				@"
@@ -22,7 +23,7 @@ namespace BlazorDB.App.Services
 			return await GetAll(query, "allFaculties");
 		}
 		
-		public override async Task<Faculty> GetAsync(int id)
+		public async Task<Faculty> GetAsync(int id)
 		{
 			const string query = 
 				@"
@@ -37,7 +38,7 @@ namespace BlazorDB.App.Services
 			return await GetOne(query, "facultyById", id);
 		}
 		
-		public override async Task<Faculty> UpdateAsync(Faculty faculty)
+		public async Task<Faculty> UpdateAsync(Faculty faculty)
 		{
 			const string query = 
 				@"
@@ -61,7 +62,7 @@ namespace BlazorDB.App.Services
 			});
 		}
 		
-		public override async Task<Faculty> DeleteAsync(int id)
+		public async Task<Faculty> DeleteAsync(int id)
 		{
 			const string query = 
 				@"
@@ -83,7 +84,7 @@ namespace BlazorDB.App.Services
 			});
 		}
 		
-		public override async Task<Faculty> AddAsync(Faculty faculty)
+		public async Task<Faculty> AddAsync(Faculty faculty)
 		{
 			const string query = 
 				@"

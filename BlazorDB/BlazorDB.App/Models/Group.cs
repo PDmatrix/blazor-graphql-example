@@ -17,10 +17,5 @@ namespace BlazorDB.App.Models
 			Faculties = new List<Faculty>();
 			FacultyId = 1;
 		}
-
-		public async Task FillFaculties()
-		{
-			Faculties = await new FacultyService().GetAsync();
-		}
 	}
 }

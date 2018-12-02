@@ -1,21 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BlazorDB.App.Extensions;
+using BlazorDB.App.Interfaces;
 using BlazorDB.App.Models;
 using GraphQL.Client.Http;
 using GraphQL.Common.Request;
 
 namespace BlazorDB.App.Services
 {
-	public abstract class BaseGraphQlService<T>
+	public abstract class BaseGraphQlService<T> : IBaseGraphQlService<T>
 	{
-		public abstract Task<ICollection<T>> GetAsync();
-		public abstract Task<T> GetAsync(int id);
-		public abstract Task<T> UpdateAsync(T update);
-		public abstract Task<T> DeleteAsync(int id);
-		public abstract Task<T> AddAsync(T add);
-		
-		protected static async Task<ICollection<T>> GetAll(string query, string name) 
+		public async Task<ICollection<T>> GetAll(string query, string name) 
 		{
 			var req = new GraphQLRequest
 			{
@@ -24,10 +20,11 @@ namespace BlazorDB.App.Services
 			
 			var client = new GraphQLHttpClient($"{Environment.GetEnvironmentVariable("ASPNETCORE_API_URL")}");
 			var res = await client.SendQueryAsync(req);
+			
 			return res.GetDataFieldAs<ConnectionGraphQl<T>>(name).Nodes;
 		}
 		
-		protected static async Task<T> GetOne(string query, string name, int id) 
+		public async Task<T> GetOne(string query, string name, int id) 
 		{
 			var req = new GraphQLRequest
 			{
@@ -40,7 +37,7 @@ namespace BlazorDB.App.Services
 			return res.ExtGetDataFieldAs<T>(name);
 		}
 		
-		protected static async Task<T> Mutate(string query, string name, object variables) 
+		public async Task<T> Mutate(string query, string name, object variables) 
 		{
 			var req = new GraphQLRequest
 			{

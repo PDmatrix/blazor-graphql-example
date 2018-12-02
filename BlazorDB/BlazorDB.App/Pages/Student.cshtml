@@ -1,21 +1,17 @@
 @page "/students"
-@using BlazorDB.App.Services
-
-@inject HttpClient Http
-@inject StudentService StudentService
-
+@inherits BlazorDB.App.PageLogic.StudentPageBase
 
 <Modal ModalId="modal">
     <ModalHeader Title="Редактировать студента"/>
     <ModalBody>
-        <StudentModal Student="@EditStudent" />
+        <StudentModal Student="@Current" />
     </ModalBody>
     <ModalFooter 
         CloseOnClick="@true" 
-        OnClick="@(async () => await UpdateStudent())" 
+        OnClick="@(async () => await Update())" 
         ButtonTitle="Сохранить"/>
 </Modal>
-@if (Students == null)
+@if (Collection == null)
 {
     <Loader />
 }
@@ -35,12 +31,12 @@ else
             </tr>
             </thead>
             <tbody>
-            @foreach (var student in Students)
+            @foreach (var student in Collection)
             {
                 <tr>
                     <td>@student.StudentName</td>
                     <td>@student.Surname</td>
-                    <td>@student.ClassByClassId.ClassName</td>
+                    <td>@student.Group.ClassName</td>
                     <td>@student.Gender</td>
                     <td>@student.BirthYear</td>
                     <td>@student.Scholarship</td>
@@ -57,7 +53,7 @@ else
                 <Divider Vertical="@true" />
                 <button
                     type="button"
-                    onclick="@(async () => await DeleteStudent(student.Id))"
+                    onclick="@(async () => await Delete(student.Id))"
                     class="btn btn-danger mb-2">
                     Удалить
                 </button>
@@ -77,62 +73,10 @@ else
 <Modal ModalId="modalAdd">
     <ModalHeader Title="Добавить студента"/>
     <ModalBody>
-        <StudentModal Student="@EditStudent" />
+        <StudentModal Student="@Current" />
     </ModalBody>
     <ModalFooter 
         CloseOnClick="@true" 
-        OnClick="@(async () => await AddStudent())" 
+        OnClick="@(async () => await Add())" 
         ButtonTitle="Сохранить"/>
 </Modal>
-
-
-@functions
-{
-    private ICollection<Models.Student> Students { get; set; }
-    private Models.Student EditStudent { get; set; }
-
-    protected override async Task OnInitAsync()
-    {
-        Students = await StudentService.GetAsync().ConfigureAwait(false);
-    }
-    
-    private async Task AddStudent()
-    {
-        await StudentService.AddAsync(EditStudent).ConfigureAwait(false);
-        Students = await StudentService.GetAsync().ConfigureAwait(false);
-        StateHasChanged();
-    }
-    
-    private async Task ShowModal()
-    {
-        EditStudent = new Models.Student();
-        await EditStudent.FillGroups();
-    }
-    
-    private async Task ShowModal(int id)
-    {
-        EditStudent = await StudentService.GetAsync(id).ConfigureAwait(false);
-        await EditStudent.FillGroups();
-    }
-    
-    private async Task UpdateStudent()
-    {
-        if (Students is List<Models.Student> studentList)
-        {
-            studentList[studentList.FindIndex(r => r.Id == EditStudent.Id)] = EditStudent;
-        }
-        else
-        {
-            Students = await StudentService.GetAsync().ConfigureAwait(false);
-        }
-        StateHasChanged();
-        EditStudent = await StudentService.UpdateAsync(EditStudent).ConfigureAwait(false);
-    }
-    
-    private async Task DeleteStudent(int id)
-    {
-        Students = Students.Where(r => r.Id != id).ToList();
-        StateHasChanged();
-        await StudentService.DeleteAsync(id).ConfigureAwait(false);
-    }
-}

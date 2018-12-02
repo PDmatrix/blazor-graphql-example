@@ -1,19 +1,17 @@
 @page "/faculties"
-@using BlazorDB.App.Services
-@inject HttpClient Http
-@inject FacultyService FacultyService
+@inherits BlazorDB.App.PageLogic.FacultyPageBase
 
 <Modal ModalId="modal">
     <ModalHeader Title="Редактировать факультет"/>
     <ModalBody>
-        <FacultyModal Faculty="@EditFaculty" />
+        <FacultyModal Faculty="@Current" />
     </ModalBody>
     <ModalFooter 
         CloseOnClick="@true" 
-        OnClick="@(async () => await UpdateFaculty())" 
+        OnClick="@(async () => await Update())" 
         ButtonTitle="Сохранить"/>
 </Modal>
-@if (Faculties == null)
+@if (Collection == null)
 {
     <Loader />
 }
@@ -27,7 +25,7 @@ else
             </tr>
             </thead>
             <tbody>
-            @foreach (var faculty in Faculties)
+            @foreach (var faculty in Collection)
             {
                 <tr>
                     <td>@faculty.FacultyName</td>
@@ -43,7 +41,7 @@ else
                 <Divider Vertical="@true" />
                 <button
                     type="button"
-                    onclick="@(async () => await DeleteFaculty(faculty.Id))"
+                    onclick="@(async () => await Delete(faculty.Id))"
                     class="btn btn-danger mb-2">
                     Удалить
                 </button>
@@ -63,60 +61,10 @@ else
 <Modal ModalId="modalAdd">
     <ModalHeader Title="Добавить факультет"/>
     <ModalBody>
-        <FacultyModal Faculty="@EditFaculty" />
+        <FacultyModal Faculty="@Current" />
     </ModalBody>
     <ModalFooter 
         CloseOnClick="@true" 
-        OnClick="@(async () => await AddFaculty())" 
+        OnClick="@(async () => await Add())" 
         ButtonTitle="Сохранить"/>
 </Modal>
-
-
-@functions
-{
-    private ICollection<Models.Faculty> Faculties { get; set; }
-    private Models.Faculty EditFaculty { get; set; }
-
-    protected override async Task OnInitAsync()
-    {
-        Faculties = await FacultyService.GetAsync().ConfigureAwait(false);
-    }
-    
-    private async Task AddFaculty()
-    {
-        await FacultyService.AddAsync(EditFaculty).ConfigureAwait(false);
-        Faculties = await FacultyService.GetAsync().ConfigureAwait(false);
-        StateHasChanged();
-    }
-    
-    private void ShowModal()
-    {
-        EditFaculty = new Models.Faculty();
-    }
-    
-    private async Task ShowModal(int id)
-    {
-        EditFaculty = await FacultyService.GetAsync(id).ConfigureAwait(false);
-    }
-    
-    private async Task UpdateFaculty()
-    {
-        if (Faculties is List<Models.Faculty> facultyList)
-        {
-            facultyList[facultyList.FindIndex(r => r.Id == EditFaculty.Id)] = EditFaculty;
-        }
-        else
-        {
-            Faculties = await FacultyService.GetAsync().ConfigureAwait(false);
-        }
-        StateHasChanged();
-        EditFaculty = await FacultyService.UpdateAsync(EditFaculty).ConfigureAwait(false);
-    }
-    
-    private async Task DeleteFaculty(int id)
-    {
-        Faculties = Faculties.Where(r => r.Id != id).ToList();
-        StateHasChanged();
-        await FacultyService.DeleteAsync(id).ConfigureAwait(false);
-    }
-}

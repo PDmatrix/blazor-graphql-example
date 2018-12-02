@@ -14,8 +14,7 @@ namespace BlazorDB.App.Models
 		public int BirthYear { get; set; }
 		public int Children { get; set; }	
 		public int Scholarship { get; set; }
-		public string Fullname { get; set; }
-		public Group ClassByClassId { get; set; }
+		public Group Group { get; set; }
 		
 		public IEnumerable<Group> Groups { get; set; }
 
@@ -23,11 +22,6 @@ namespace BlazorDB.App.Models
 		{
 			Groups = new List<Group>();
 			ClassId = 1;
-		}
-
-		public async Task FillGroups()
-		{
-			Groups = await GraphqQlService.GetGroupsAsync().ConfigureAwait(false);
 		}
 	}
 }

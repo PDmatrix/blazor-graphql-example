@@ -1,9 +1,7 @@
-using System.Net.Http;
-using BlazorDB.App.Pages;
+using BlazorDB.App.Interfaces;
 using Microsoft.AspNetCore.Blazor.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using BlazorDB.App.Services;
-using GraphQL.Common.Request;
 
 namespace BlazorDB.App
 {
@@ -11,12 +9,9 @@ namespace BlazorDB.App
 	{
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddSingleton<WeatherForecastService>();
-			services.AddScoped<StudentService>();
-			services.AddScoped<FacultyService>();
-			services.AddScoped<ClassService>();
-			
-			services.AddScoped<HttpClient>();
+			services.AddScoped<IStudentService, StudentService>();
+			services.AddScoped<IFacultyService, FacultyService>();
+			services.AddScoped<IClassService, ClassService>();
 		}
 
 		public void Configure(IBlazorApplicationBuilder app)

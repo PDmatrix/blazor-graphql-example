@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BlazorDB.App.Interfaces;
 using BlazorDB.App.Models;
 
 namespace BlazorDB.App.Services
 {
-	public class StudentService : BaseGraphQlService<Student>
+	public class StudentService : BaseGraphQlService<Student>, IStudentService
 	{
-		public override async Task<ICollection<Student>> GetAsync()
+		public async Task<ICollection<Student>> GetAsync()
 		{
 			const string query = 
 				@"
@@ -21,8 +22,7 @@ namespace BlazorDB.App.Services
 					  birthYear
 					  children
 					  scholarship
-					  fullName
-					  classByClassId {
+					  group: classByClassId {
 					    className
 					  }
 					}
@@ -32,7 +32,7 @@ namespace BlazorDB.App.Services
 			return await GetAll(query, "allStudents");
 		}
 		
-		public override async Task<Student> GetAsync(int id)
+		public async Task<Student> GetAsync(int id)
 		{
 			const string query = 
 				@"
@@ -46,8 +46,7 @@ namespace BlazorDB.App.Services
 					birthYear
 					children
 					scholarship
-					fullName
-					classByClassId {
+					group: classByClassId {
 					  className
 					}
 				  }
@@ -57,7 +56,7 @@ namespace BlazorDB.App.Services
 			return await GetOne(query, "studentById", id);
 		}
 	
-		public override async Task<Student> UpdateAsync(Student student)
+		public async Task<Student> UpdateAsync(Student student)
 		{
 			const string query = 
 				@"
@@ -72,8 +71,7 @@ namespace BlazorDB.App.Services
 					  birthYear
 					  children
 					  scholarship
-					  fullName
-					  classByClassId {
+					  group: classByClassId {
 					    className
 					  }
 					}
@@ -97,7 +95,7 @@ namespace BlazorDB.App.Services
 			});
 		}
 		
-		public override async Task<Student> DeleteAsync(int id)
+		public async Task<Student> DeleteAsync(int id)
 		{
 			const string query = 
 				@"
@@ -112,8 +110,7 @@ namespace BlazorDB.App.Services
 					  birthYear
 					  children
 					  scholarship
-					  fullName
-					  classByClassId {
+					  group: classByClassId {
 					    className
 					  }
 					}
@@ -129,7 +126,7 @@ namespace BlazorDB.App.Services
 			});
 		}
 		
-		public override async Task<Student> AddAsync(Student student)
+		public async Task<Student> AddAsync(Student student)
 		{
 			const string query = 
 				@"
@@ -144,8 +141,7 @@ namespace BlazorDB.App.Services
 					  birthYear
 					  children
 					  scholarship
-					  fullName
-					  classByClassId {
+					  group: classByClassId {
 					    className
 					  }
 					}

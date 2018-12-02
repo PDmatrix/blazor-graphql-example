@@ -1,7 +1,5 @@
 @page "/classes"
-@using BlazorDB.App.Services
-@inject HttpClient Http
-@inject ClassService ClassService
+@inherits BlazorDB.App.PageLogic.ClassPageBase
 
 <Modal ModalId="modal">
     <ModalHeader Title="Редактировать группу"/>
@@ -10,7 +8,7 @@
     </ModalBody>
     <ModalFooter 
         CloseOnClick="@true" 
-        OnClick="@(async () => await UpdateGroup())" 
+        OnClick="@(async () => await Update())" 
         ButtonTitle="Сохранить"/>
 </Modal>
 @if (Groups == null)
@@ -45,7 +43,7 @@ else
                 <Divider Vertical="@true" />
                 <button
                     type="button"
-                    onclick="@(async () => await DeleteGroup(group.Id))"
+                    onclick="@(async () => await Delete(group.Id))"
                     class="btn btn-danger mb-2">
                     Удалить
                 </button>
@@ -69,58 +67,6 @@ else
     </ModalBody>
     <ModalFooter 
         CloseOnClick="@true" 
-        OnClick="@(async () => await AddGroup())" 
+        OnClick="@(async () => await Add())" 
         ButtonTitle="Сохранить"/>
 </Modal>
-
-
-@functions
-{
-    private ICollection<Models.Group> Groups { get; set; }
-    private Models.Group EditGroup { get; set; }
-
-    protected override async Task OnInitAsync()
-    {
-        Groups = await ClassService.GetAsync().ConfigureAwait(false);
-    }
-    
-    private async Task AddGroup()
-    {
-        await ClassService.AddAsync(EditGroup).ConfigureAwait(false);
-        Groups = await ClassService.GetAsync().ConfigureAwait(false);
-        StateHasChanged();
-    }
-    
-    private async Task ShowModal()
-    {
-        EditGroup = new Models.Group();
-        await EditGroup.FillFaculties();
-    }
-    
-    private async Task ShowModal(int id)
-    {
-        EditGroup = await ClassService.GetAsync(id).ConfigureAwait(false);
-        await EditGroup.FillFaculties();
-    }
-    
-    private async Task UpdateGroup()
-    {
-        if (Groups is List<Models.Group> groups)
-        {
-            groups[groups.FindIndex(r => r.Id == EditGroup.Id)] = EditGroup;
-        }
-        else
-        {
-            Groups = await ClassService.GetAsync().ConfigureAwait(false);
-        }
-        StateHasChanged();
-        EditGroup = await ClassService.UpdateAsync(EditGroup).ConfigureAwait(false);
-    }
-    
-    private async Task DeleteGroup(int id)
-    {
-        Groups = Groups.Where(r => r.Id != id).ToList();
-        StateHasChanged();
-        await ClassService.DeleteAsync(id).ConfigureAwait(false);
-    }
-}
