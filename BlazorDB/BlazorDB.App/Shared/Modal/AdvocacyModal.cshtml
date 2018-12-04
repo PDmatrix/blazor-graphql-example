@@ -1,0 +1,48 @@
+@using BlazorDB.App.Models
+@if (Advocacy == null)
+{
+    <Loader/>
+}
+else
+{
+    <form>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Год сдачи</label>
+            <input bind="@Advocacy.YearEnd" type="number" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Тип защиты</label>
+            <input bind="@Advocacy.AdvocacyType" type="text" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Тема</label>
+            <input bind="@Advocacy.Theme" type="text" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="class" class="col-form-label">Преподаватель:</label>
+            <select bind="@Advocacy.LecturerId" class="form-control" id="class">
+                @if (Advocacy.Lecturers.Any())
+                {
+                    foreach (var lecturer in Advocacy.Lecturers)
+                     {
+                         if (Advocacy.LecturerId == default)
+                         {
+                             Advocacy.LecturerId = lecturer.Id;
+                         }
+                         <option value="@lecturer.Id">@lecturer.Surname</option>
+                     }
+                }
+                else
+                {
+                    <Loader />
+                }
+            </select>
+        </div>
+    </form>
+}
+
+@functions
+{
+    [Parameter]
+    private Advocacy Advocacy { get; set; }
+}

@@ -1,0 +1,40 @@
+@using BlazorDB.App.Models
+@if (ScienceTheme == null)
+{
+    <Loader/>
+}
+else
+{
+    <form>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Название темы</label>
+            <input bind="@ScienceTheme.ThemeName" type="text" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="class" class="col-form-label">Преподаватель:</label>
+            <select bind="@ScienceTheme.LecturerId" class="form-control" id="class">
+                @if (ScienceTheme.Lecturers.Any())
+                {
+                    foreach (var lecturer in ScienceTheme.Lecturers)
+                    {
+                        if (ScienceTheme.LecturerId == default)
+                        {
+                            ScienceTheme.LecturerId = lecturer.Id;
+                        }
+                        <option value="@lecturer.Id">@lecturer.Surname</option>
+                    }
+                }
+                else
+                {
+                    <Loader />
+                }
+            </select>
+        </div>
+    </form>
+}
+
+@functions
+{
+    [Parameter]
+    private ScienceTheme ScienceTheme { get; set; }
+}

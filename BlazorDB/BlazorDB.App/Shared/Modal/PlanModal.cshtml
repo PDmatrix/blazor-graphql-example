@@ -1,0 +1,76 @@
+@using BlazorDB.App.Models
+@if (Plan == null)
+{
+    <Loader/>
+}
+else
+{
+    <form>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Количество часов</label>
+            <input bind="@Plan.HourCount" type="number" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Тип контроля</label>
+            <input bind="@Plan.FormControl" type="text" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Тип занятия</label>
+            <input bind="@Plan.OccupationType" type="text" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Дата начала</label>
+            <input bind="@Plan.DateStart" type="date" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Дата конца</label>
+            <input bind="@Plan.DateEnd" type="date" class="form-control" id="student-name" />
+        </div> 
+        <div class="form-group">
+            <label for="class" class="col-form-label">Преподаватель:</label>
+            <select bind="@Plan.LecturerId" class="form-control" id="class">
+                @if (Plan.Lecturers.Any())
+                {
+                    foreach (var lecturer in Plan.Lecturers)
+                    {
+                        if (Plan.LecturerId == default)
+                        {
+                            Plan.LecturerId = lecturer.Id;
+                        }
+                        <option value="@lecturer.Id">@lecturer.Surname</option>
+                    }
+                }
+                else
+                {
+                    <Loader />
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="class" class="col-form-label">Дисциплина:</label>
+            <select bind="@Plan.DisciplineId" class="form-control" id="class">
+                @if (Plan.Disciplines.Any())
+                {
+                    foreach (var discipline in Plan.Disciplines)
+                    {
+                        if (Plan.DisciplineId == default)
+                        {
+                            Plan.DisciplineId = discipline.Id;
+                        }
+                        <option value="@discipline.Id">@discipline.DisciplineName</option>
+                    }
+                }
+                else
+                {
+                    <Loader />
+                }
+            </select>
+        </div>
+    </form>
+}
+
+@functions
+{
+    [Parameter]
+    private Plan Plan { get; set; }
+}

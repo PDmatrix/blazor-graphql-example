@@ -1,0 +1,36 @@
+@using BlazorDB.App.Models
+@if (Traineeship == null)
+{
+    <Loader/>
+}
+else
+{
+    <form>
+        <div class="form-group">
+            <label for="class" class="col-form-label">Преподаватель:</label>
+            <select bind="@Traineeship.LecturerId" class="form-control" id="class">
+                @if (Traineeship.Lecturers.Any())
+                {
+                    foreach (var lecturer in Traineeship.Lecturers)
+                    {
+                        if (Traineeship.LecturerId == default)
+                        {
+                            Traineeship.LecturerId = lecturer.Id;
+                        }
+                        <option value="@lecturer.Id">@lecturer.Surname</option>
+                    }
+                }
+                else
+                {
+                    <Loader />
+                }
+            </select>
+        </div>
+    </form>
+}
+
+@functions
+{
+    [Parameter]
+    private Traineeship Traineeship { get; set; }
+}

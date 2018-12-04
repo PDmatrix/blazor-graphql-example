@@ -9,49 +9,46 @@ namespace BlazorDB.App.PageLogic
 {
 	public class ClassPageBase : PageBase<Group>, IPageLogic
 	{
-		protected ICollection<Group> Groups { get; set; }
-		protected Group EditGroup { get; set; }
-
 		protected override async Task OnInitAsync()
 		{
-			Groups = await ClassService.GetAsync().ConfigureAwait(false);
+			Collection = await ClassService.GetAsync().ConfigureAwait(false);
 		}
     
 		public async Task Add()
 		{
-			await ClassService.AddAsync(EditGroup).ConfigureAwait(false);
-			Groups = await ClassService.GetAsync().ConfigureAwait(false);
+			await ClassService.AddAsync(Current).ConfigureAwait(false);
+			Collection = await ClassService.GetAsync().ConfigureAwait(false);
 			StateHasChanged();
 		}
     
 		public async Task ShowModal()
 		{
-			EditGroup = new Group {Faculties = await FacultyService.GetAsync()};
+			Current = new Group {Faculties = await FacultyService.GetAsync()};
 		}
     
 		public async Task ShowModal(int id)
 		{
-			EditGroup = await ClassService.GetAsync(id).ConfigureAwait(false);
-			EditGroup.Faculties = await FacultyService.GetAsync();
+			Current = await ClassService.GetAsync(id).ConfigureAwait(false);
+			Current.Faculties = await FacultyService.GetAsync();
 		}
     
 		public async Task Update()
 		{
-			if (Groups is List<Group> groups)
+			if (Collection is List<Group> groups)
 			{
-				groups[groups.FindIndex(r => r.Id == EditGroup.Id)] = EditGroup;
+				groups[groups.FindIndex(r => r.Id == Current.Id)] = Current;
 			}
 			else
 			{
-				Groups = await ClassService.GetAsync().ConfigureAwait(false);
+				Collection = await ClassService.GetAsync().ConfigureAwait(false);
 			}
 			StateHasChanged();
-			EditGroup = await ClassService.UpdateAsync(EditGroup).ConfigureAwait(false);
+			Current = await ClassService.UpdateAsync(Current).ConfigureAwait(false);
 		}
     
 		public async Task Delete(int id)
 		{
-			Groups = Groups.Where(r => r.Id != id).ToList();
+			Collection = Collection.Where(r => r.Id != id).ToList();
 			StateHasChanged();
 			await ClassService.DeleteAsync(id).ConfigureAwait(false);
 		}

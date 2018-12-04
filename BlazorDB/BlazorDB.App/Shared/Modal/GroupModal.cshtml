@@ -17,6 +17,10 @@ else
                 {
                     foreach (var faculty in Group.Faculties)
                      {
+                         if (Group.FacultyId == default)
+                         {
+                             Group.FacultyId = faculty.Id;
+                         }
                          <option value="@faculty.Id">@faculty.FacultyName</option>
                      }
                 }

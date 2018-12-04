@@ -21,7 +21,6 @@ namespace BlazorDB.App.Models
 		public Student()
 		{
 			Groups = new List<Group>();
-			ClassId = 1;
 		}
 	}
 }

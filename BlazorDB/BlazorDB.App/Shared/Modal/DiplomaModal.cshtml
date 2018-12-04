@@ -1,0 +1,60 @@
+@using BlazorDB.App.Models
+@if (Diploma == null)
+{
+    <Loader/>
+}
+else
+{
+    <form>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Тема</label>
+            <input bind="@Diploma.Theme" type="text" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="class" class="col-form-label">Студент:</label>
+            <select bind="@Diploma.StudentId" class="form-control" id="class">
+                @if (Diploma.Students.Any())
+                {
+                    foreach (var student in Diploma.Students)
+                    {
+                        if (Diploma.StudentId == default)
+                        {
+                            Diploma.StudentId = student.Id;
+                        }
+                        <option value="@student.Id">@student.Surname</option>
+                    }
+                }
+                else
+                {
+                    <Loader />
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="class" class="col-form-label">Преподаватель:</label>
+            <select bind="@Diploma.LecturerId" class="form-control" id="class">
+                @if (Diploma.Lecturers.Any())
+                {
+                    foreach (var lecturer in Diploma.Lecturers)
+                    {
+                        if (Diploma.LecturerId == default)
+                        {
+                            Diploma.LecturerId = lecturer.Id;
+                        }
+                        <option value="@lecturer.Id">@lecturer.Surname</option>
+                    }
+                }
+                else
+                {
+                    <Loader />
+                }
+            </select>
+        </div>
+    </form>
+}
+
+@functions
+{
+    [Parameter]
+    private Diploma Diploma { get; set; }
+}

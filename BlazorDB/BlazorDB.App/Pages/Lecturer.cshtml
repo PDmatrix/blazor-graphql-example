@@ -1,56 +1,84 @@
 @page "/lecturers"
-@using BlazorDB.App.Services
+@inherits BlazorDB.App.PageLogic.LecturerPageBase
 
-@inject HttpClient Http
-@inject GraphqQlService GraphqQlService
-
-@if (Lecturers == null)
+<Modal ModalId="modal">
+    <ModalHeader Title="Редактировать преподавателя"/>
+    <ModalBody>
+        <LecturerModal Lecturer="@Current" />
+    </ModalBody>
+    <ModalFooter 
+        CloseOnClick="@true" 
+        OnClick="@(async () => await Update())" 
+        ButtonTitle="Сохранить"/>
+</Modal>
+@if (Collection == null)
 {
     <Loader />
 }
 else
 {
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Имя</th>
-            <th>Фамилия</th>
-            <th>Пол</th>
-            <th>Год рождения</th>
-            <th>Тип преподавателя</th>
-            <th>Количество детей</th>
-            <th>Зарплата</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var lecturer in Lecturers)
-        {
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
             <tr>
-                <td>@lecturer.LecturerName</td>
-                <td>@lecturer.Surname</td>
-                <td>@lecturer.Gender</td>
-                <td>@lecturer.BirthYear</td>
-                <td>@lecturer.LecturerType</td>
-                <td>@lecturer.Children</td>
-                <td>@lecturer.Salary</td>
-                <td>
-                    <button type="button" class="btn btn-primary">Редактировать</button>
-                    <Divider Vertical="@true" />
-                    <button type="button" class="btn btn-danger">Удалить</button>
-                </td>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Кафедра</th>
+                <th>Тип</th>
+                <th>Пол</th>
+                <th>Дата рождения</th>
+                <th>Количество детей</th>
+                <th>Зарплата</th>
             </tr>
-        }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @foreach (var lecturer in Collection)
+            {
+                <tr>
+                    <td>@lecturer.LecturerName</td>
+                    <td>@lecturer.Surname</td>
+                    <td>@lecturer.Pulpit.PulpitName</td>
+                    <td>@lecturer.LecturerType</td>
+                    <td>@lecturer.Gender</td>
+                    <td>@lecturer.BirthYear</td>
+                    <td>@lecturer.Children</td>
+                    <td>@lecturer.Salary</td>
+                </tr>
+                <button
+                    data-toggle="modal"
+                    data-target="#modal"
+                    type="button"
+                    onclick="@(() => ShowModal(lecturer.Id))"
+                    class="btn btn-primary mb-2">
+                    Редактировать
+                </button>
+                <Divider Vertical="@true" />
+                <button
+                    type="button"
+                    onclick="@(async () => await Delete(lecturer.Id))"
+                    class="btn btn-danger mb-2">
+                    Удалить
+                </button>
+            }
+            </tbody>
+        </table>
+        <button
+            data-toggle="modal"
+            data-target="#modalAdd"
+            type="button"
+            onclick="@(() => ShowModal())"
+            class="btn btn-success">
+            Добавить
+        </button>
+    </div>
 }
-
-@functions
-{
-    private ICollection<BlazorDB.App.Models.Lecturer> Lecturers { get; set; }
-
-    protected override async Task OnInitAsync()
-    {
-        Lecturers = await GraphqQlService.GetLecturersAsync();
-    }
-}
+<Modal ModalId="modalAdd">
+    <ModalHeader Title="Добавить преподавателя"/>
+    <ModalBody>
+        <LecturerModal Lecturer="@Current" />
+    </ModalBody>
+    <ModalFooter 
+        CloseOnClick="@true" 
+        OnClick="@(async () => await Add())" 
+        ButtonTitle="Сохранить"/>
+</Modal>

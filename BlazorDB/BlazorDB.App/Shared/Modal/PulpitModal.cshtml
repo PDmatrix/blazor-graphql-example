@@ -1,0 +1,40 @@
+@using BlazorDB.App.Models
+@if (Pulpit == null)
+{
+    <Loader/>
+}
+else
+{
+    <form>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Название кафедры</label>
+            <input bind="@Pulpit.PulpitName" type="text" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="class" class="col-form-label">Факультет:</label>
+            <select bind="@Pulpit.FacultyId" class="form-control" id="class">
+                @if (Pulpit.Faculties.Any())
+                {
+                    foreach (var faculty in Pulpit.Faculties)
+                    {
+                        if (Pulpit.FacultyId == default)
+                        {
+                            Pulpit.FacultyId = faculty.Id;
+                        }
+                        <option value="@faculty.Id">@faculty.FacultyName</option>
+                    }
+                }
+                else
+                {
+                    <Loader />
+                }
+            </select>
+        </div>
+    </form>
+}
+
+@functions
+{
+    [Parameter]
+    private Pulpit Pulpit { get; set; }
+}

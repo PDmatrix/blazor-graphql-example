@@ -12,6 +12,17 @@ namespace BlazorDB.App
 			services.AddScoped<IStudentService, StudentService>();
 			services.AddScoped<IFacultyService, FacultyService>();
 			services.AddScoped<IClassService, ClassService>();
+			services.AddScoped<ILecturerService, LecturerService>();
+			services.AddScoped<IPulpitService, PulpitService>();
+			
+			services.AddScoped<IAdvocacyService, AdvocacyService>();
+			services.AddScoped<IControlService, ControlService>();
+			services.AddScoped<IDiplomaService, DiplomaService>();
+			services.AddScoped<IDisciplineService, DisciplineService>();
+			services.AddScoped<IPlanService, PlanService>();
+			services.AddScoped<IScienceDirectionService, ScienceDirectionService>();
+			services.AddScoped<IScienceThemeService, ScienceThemeService>();
+			services.AddScoped<ITraineeshipService, TraineeshipService>();
 		}
 
 		public void Configure(IBlazorApplicationBuilder app)

@@ -29,6 +29,10 @@ else
                 {
                     foreach (var group in Student.Groups)
                      {
+                         if (Student.ClassId == default)
+                         {
+                             Student.ClassId = group.Id;
+                         }
                          <option value="@group.Id">@group.ClassName</option>
                      }
                 }

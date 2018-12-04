@@ -1,0 +1,88 @@
+@using BlazorDB.App.Models
+@if (Control == null)
+{
+    <Loader/>
+}
+else
+{
+    <form>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Оценка</label>
+            <input bind="@Control.Grade" type="number" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Тип контроля</label>
+            <input bind="@Control.FormControl" type="text" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="student-name" class="col-form-label">Номер семестра</label>
+            <input bind="@Control.SemesterNum" type="number" class="form-control" id="student-name" />
+        </div>
+        <div class="form-group">
+            <label for="class" class="col-form-label">Студент:</label>
+            <select bind="@Control.StudentId" class="form-control" id="class">
+                @if (Control.Students.Any())
+                {
+                    foreach (var student in Control.Students)
+                    {
+                        if (Control.StudentId == default)
+                        {
+                            Control.StudentId = student.Id;
+                        }
+                        <option value="@student.Id">@student.Surname</option>
+                    }
+                }
+                else
+                {
+                    <Loader />
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="class" class="col-form-label">Преподаватель:</label>
+            <select bind="@Control.LecturerId" class="form-control" id="class">
+                @if (Control.Lecturers.Any())
+                {
+                    foreach (var lecturer in Control.Lecturers)
+                    {
+                        if (Control.LecturerId == default)
+                        {
+                            Control.LecturerId = lecturer.Id;
+                        }
+                        <option value="@lecturer.Id">@lecturer.Surname</option>
+                    }
+                }
+                else
+                {
+                    <Loader />
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="class" class="col-form-label">Дисциплина:</label>
+            <select bind="@Control.DisciplineId" class="form-control" id="class">
+                @if (Control.Disciplines.Any())
+                {
+                    foreach (var discipline in Control.Disciplines)
+                    {
+                        if (Control.DisciplineId == default)
+                        {
+                            Control.DisciplineId = discipline.Id;
+                        }
+                        <option value="@discipline.Id">@discipline.DisciplineName</option>
+                    }
+                }
+                else
+                {
+                    <Loader />
+                }
+            </select>
+        </div>
+    </form>
+}
+
+@functions
+{
+    [Parameter]
+    private Control Control { get; set; }
+}

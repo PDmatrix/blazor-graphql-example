@@ -1,10 +1,10 @@
-@page "/classes"
-@inherits BlazorDB.App.PageLogic.ClassPageBase
+@page "/diplomas"
+@inherits BlazorDB.App.PageLogic.DiplomaPageBase
 
 <Modal ModalId="modal">
-    <ModalHeader Title="Редактировать группу"/>
+    <ModalHeader Title="Редактировать диплом"/>
     <ModalBody>
-        <GroupModal Group="@Current" />
+        <DiplomaModal Diploma="@Current" />
     </ModalBody>
     <ModalFooter 
         CloseOnClick="@true" 
@@ -21,29 +21,31 @@ else
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>Группа</th>
-                <th>Факультет</th>
+                <th>Тема</th>
+                <th>Преподаватель</th>
+                <th>Студент</th>
             </tr>
             </thead>
             <tbody>
-            @foreach (var group in Collection)
+            @foreach (var diploma in Collection)
             {
                 <tr>
-                    <td>@group.ClassName</td>
-                    <td>@group.Faculty.FacultyName</td>
+                    <td>@diploma.Theme</td>
+                    <td>@diploma.Lecturer.Surname</td>
+                    <td>@diploma.Student.Surname</td>
                 </tr>
                 <button
                     data-toggle="modal"
                     data-target="#modal"
                     type="button"
-                    onclick="@(() => ShowModal(group.Id))"
+                    onclick="@(() => ShowModal(diploma.Id))"
                     class="btn btn-primary mb-2">
                     Редактировать
                 </button>
                 <Divider Vertical="@true" />
                 <button
                     type="button"
-                    onclick="@(async () => await Delete(group.Id))"
+                    onclick="@(async () => await Delete(diploma.Id))"
                     class="btn btn-danger mb-2">
                     Удалить
                 </button>
@@ -61,9 +63,9 @@ else
     </div>
 }
 <Modal ModalId="modalAdd">
-    <ModalHeader Title="Добавить группу"/>
+    <ModalHeader Title="Добавить диплом"/>
     <ModalBody>
-        <GroupModal Group="@Current" />
+        <DiplomaModal Diploma="@Current" />
     </ModalBody>
     <ModalFooter 
         CloseOnClick="@true" 
